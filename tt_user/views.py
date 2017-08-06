@@ -56,7 +56,7 @@ def login_handler(request):
     uname = post.get('user_name')
     upwd = post.get('user_pwd')
     uname_jz = post.get('name_jz', '0')
-    print uname_jz
+
     s1 = sha1()
     s1.update(upwd)
     upwd_sha1 = s1.hexdigest()
@@ -106,7 +106,6 @@ def user_info(request):
 
 @user_login
 def user_order(request):
-    print 'aaaaa'
     context = {'title': '用户订单'}
     return render(request, 'tt_user/order.html', context)
 

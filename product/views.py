@@ -3,14 +3,11 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 
 from .models import TypeInfo, GoodsInfo
-from tt_user.models import UserInfo
 
 
 # Create your views here.
 
 def index(request):
-
-
     type_list = TypeInfo.objects.all()
     list = []
     for typeinfo in type_list:
