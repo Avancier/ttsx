@@ -3,11 +3,14 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 
 from .models import TypeInfo, GoodsInfo
+from tt_user.models import UserInfo
 
 
 # Create your views here.
 
 def index(request):
+
+
     type_list = TypeInfo.objects.all()
     list = []
     for typeinfo in type_list:
@@ -22,7 +25,7 @@ def index(request):
 
 def list_product(request, type_id, page_index, order_by):
     typeinfo = TypeInfo.objects.get(pk=type_id)
-
+    #    order_by = request.GET.get('order_by',1)
     order_bystr = '-id'
     if order_by == '2':
         order_bystr = 'gprice'
@@ -30,7 +33,7 @@ def list_product(request, type_id, page_index, order_by):
         order_bystr = '-gclick'
 
     list = typeinfo.goodsinfo_set.order_by(order_bystr)
-    list_new = typeinfo.goodsinfo_set.order_by('-id')[0:2]
+    list_new = typeinfo.goodsinfo_set.order_by('-id')[0:3]
 
     paginator = Paginator(list, 10)
 
@@ -59,14 +62,26 @@ def list_product(request, type_id, page_index, order_by):
 
 def detail(request, gid):
     try:
-        products = GoodsInfo.objects.get(pk=gid)
+        goods = GoodsInfo.objects.get(pk=gid)
 
-        products.gclick += 1
-        products.save()
+        goods.gclick += 1
+        goods.save()
 
-        list_new = products.gtype.goodsinfo_set.order_by('-id')[0:2]
+        list_new = goods.gtype.goodsinfo_set.order_by('-id')[0:2]
 
-        context = {'title': '详细页', 'cart': '1', 'goods': products, 'list_new': list_new}
+        context = {'title': '详细页', 'cart': '1', 'goods': goods, 'list_new': list_new}
         return render(request, 'tt_product/detail.html', context)
     except:
         return render(request, '404.html')
+
+
+from haystack.generic_views import SearchView
+
+
+class MySearchView(SearchView):
+    def get_context_data(self, *args, **kwargs):
+        context = super(MySearchView, self).get_context_data(*args, **kwargs)
+        context['title'] = '搜索结果'
+        context['cart'] = '1'
+        context['isleft'] = '0'
+        return context

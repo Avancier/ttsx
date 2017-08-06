@@ -56,7 +56,7 @@ def login_handler(request):
     uname = post.get('user_name')
     upwd = post.get('user_pwd')
     uname_jz = post.get('name_jz', '0')
-
+    print uname_jz
     s1 = sha1()
     s1.update(upwd)
     upwd_sha1 = s1.hexdigest()
@@ -99,6 +99,7 @@ def islogin(request):
 @user_login
 def user_info(request):
     user = UserInfo.objects.get(pk=request.session['uid'])
+    print user
     context = {'title': '用户信息', 'user': user}
     return render(request, 'tt_user/center.html', context)
 
