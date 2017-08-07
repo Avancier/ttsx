@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^user/', include('tt_user.urls')),
     url(r'^', include('product.urls')),
     url(r'^search/', include('haystack.urls')),
+    url(r'^cart/', include('tt_cart.urls')),
 
 ]

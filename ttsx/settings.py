@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'tt_user',
     'product',
     'haystack',
+    'tt_cart',
 )
 
 MIDDLEWARE_CLASSES = (
