@@ -1,7 +1,7 @@
 # coding=utf-8
-
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.db.models import Sum
 
 from .models import CartInfo
 from tt_user.signal_decorators import user_login
@@ -29,7 +29,8 @@ def add(request):
 
         cart.save()
 
-    return JsonResponse({'isok': 1})
+    c = calc_count(uid)
+    return JsonResponse({'isok': 1, 'count':c})
 
 
 @user_login
@@ -39,12 +40,44 @@ def cart(request):
     return render(request, 'tt_cart/cart.html', context)
 
 
-def declare(request):
+def delcart(request):
     try:
-        cid = int(request.GET.get('cid'))
-        cart = CartInfo.objects.get(pk=cid)
+        cid=int(request.GET.get('cid'))
+        cart=CartInfo.objects.get(pk=cid)
         cart.delete()
-        return JsonResponse({'isok': 1})
+        return JsonResponse({'isok':1})
     except:
-        return JsonResponse({'isok': 0})
+        return JsonResponse({'isok':0})
 
+
+def set(request):
+    dict = request.GET
+    cid = dict.get('cid')
+    count = dict.get('count')
+
+    isok = 0
+
+    try:
+        cart = CartInfo.objects.get(pk=cid)
+        cart.count = int(count)
+        cart.save()
+        isok=1
+        count = cart.count
+    except CartInfo.DoesNotExist as e1:
+        isok = 0
+        count = 0
+    except:
+        isok = 0
+        count = cart.count
+    return JsonResponse({'isok': isok, 'count': count})
+
+
+def count(request):
+    c = calc_count(request.session.get('uid'))
+    return JsonResponse({'count': c})
+
+
+def calc_count(uid):
+    c = CartInfo.objects.filter(user_id=uid).aggregate(Sum('count'))
+   # print c
+    return c.get('count__sum')

@@ -18,7 +18,7 @@
             <div class="fr">
                 {%if request.session.uid%}
                 <div class="login_btn fl">
-                    欢迎您: <a href="/user/"><em>{{request.session.uname}}</em>
+                    欢迎您: <a href="/user/"><em>{{request.session.uname}}</em></a>
                     <span>|</span>
 					<a href="/user/logout/">退出</a>
                 </div>
@@ -59,9 +59,18 @@
 		</form></div>
 		<div class="guest_cart fr">
 			<a href="/cart/" class="cart_name fl">我的购物车</a>
-			<div class="goods_count fl" id="show_count">1</div>
+			<div class="goods_count fl" id="show_count">0</div>
 		</div>
 	</div>
+        <script>
+        // indexOf（）方法返回在数组中可以找到给定元素的第一个索引，如果不存在，则返回-1
+        if($('.login_btn').text().indexOf('登录')===-1){
+            // 获得选择器指定的DOM元素
+            $.get('/cart/count/', function (data) {
+                $('#show_count').text(data.count);
+            });
+        }
+        </script>
     {% endif %}
 {%endif%}
 
